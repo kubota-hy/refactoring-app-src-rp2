@@ -1,8 +1,11 @@
 package jp.co.sss.crud.service;
 
+import static jp.co.sss.crud.util.ConstantMSG.*;
+
 import java.sql.SQLException;
 
 import jp.co.sss.crud.db.EmployeeDAO;
+import jp.co.sss.crud.dto.Employee;
 import jp.co.sss.crud.exception.IllegalInputException;
 import jp.co.sss.crud.exception.SystemErrorException;
 import jp.co.sss.crud.io.ConsoleWriter;
@@ -19,27 +22,28 @@ public class EmployeeDeleteService implements IEmployeeService {
 
     /**
      * 社員削除処理
-     * @throws SQLException 
-     * @throws ClassNotFoundException 
      */
+    @Override
     public void execute() throws ClassNotFoundException, SQLException {
         try {
-            writer.printLine("社員IDを入力してください：");
+            // 入力促進
+            writer.printLine(INPUT_DELETE_EMP_ID);
             Integer empId = (Integer) reader.input();
 
-            jp.co.sss.crud.dto.Employee employee = dao.findEmployeeById(empId);
+            // 対象社員検索
+            Employee employee = dao.findEmployeeById(empId);
 
             if (employee == null) {
-                writer.printError("該当する社員は存在しません。");
+                writer.printError(NO_RECORD_FOUND);
             } else {
                 dao.deleteEmployee(empId);
-                writer.printLine("社員ID " + empId + " の情報を削除しました。");
+                writer.printLine(DELETE_COMPLETE + "（社員ID: " + empId + "）");
             }
 
         } catch (IllegalInputException e) {
             writer.printError(e.getMessage());
         } catch (SystemErrorException e) {
-            writer.printError("システムエラーが発生しました。");
+            writer.printError(MSG_SYSTEM_ERROR);
         }
 
         writer.printBlank();
